@@ -2,10 +2,6 @@
 
 [NBA Data](http://data.nba.net/10s/prod/v1/today.json)
 
-generated using Luminus version "4.00"
-
-FIXME
-
 ## Prerequisites
 
 You will need [Leiningen][1] 2.0 or above installed.

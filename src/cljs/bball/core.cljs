@@ -36,6 +36,18 @@
                  [nav-link "#/" "Home" :home]
                  [nav-link "#/about" "About" :about]]]]))
 
+(defn game [data]
+  [:div.columns
+   [:div.column.is-half [:p (str ((data "vTeam") "triCode") " - " ((data "vTeam") "score"))]]
+   [:div.column.is-half [:p (str ((data "hTeam") "triCode") " - " ((data "hTeam") "score"))]]])
+
+(defn games-list []
+  (when-let [gdat @(rf/subscribe [:scoreboard])]
+    [:div.columns.is-centered
+     [:div.column.is-two-thirds
+      (for [g (gdat "games")]
+        [game g])]]))
+
 (defn about-page []
   [:section.section>div.container>div.content
    [:img {:src "/img/warning_clojure.png"}]])
@@ -57,7 +69,7 @@
 (def router
   (reitit/router
     [["/" {:name        :home
-           :view        #'home-page
+           :view        #'games-list
            :controllers [{:start (fn [_] (rf/dispatch [:page/init-home]))}]}]
      ["/about" {:name :about
                 :view #'about-page}]]))
