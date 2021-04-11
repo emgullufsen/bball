@@ -11,22 +11,29 @@
 (defn feed-connection-updates [channel]
   (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
         my-pool (atat/mk-pool)]
-    (atat/every 
+    (atat/every
      1000
      #(let [latest-sb (json/read-str (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard"))))
             sendresult (send! channel (json/write-str latest-sb))]
-        (println (json/write-str latest-sb))
-        (println (str "SEND RESULT WAS: " sendresult))
-        )
+        (println (str (type channel)))
+        (println (str "SEND RESULT WAS: " sendresult)))
      my-pool)))
 
 (defonce channels (atom #{}))
 
+(future (loop []
+          (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
+            (doseq [channel @channels]
+              (println "..............sending thru ws.........")
+              (send! channel latest-sb)))
+          (Thread/sleep 5000)
+          (recur)))
+
 (defn connect! [channel]
   (log/info "channel open")
   (swap! channels conj channel)
-  (log/info "beginning updates feed")
-  (feed-connection-updates channel))
+  (log/info "beginning updates feed"))
 
 (defn disconnect! [channel status]
   (log/info "channel closed:" status)
