@@ -30,6 +30,11 @@
   (fn [db [_ docs]]
     (assoc db :docs docs)))
 
+(rf/reg-event-db
+ :set-scoreboard
+ (fn [db [_ sb]]
+   (assoc db :scoreboard sb)))
+
 (rf/reg-event-fx
   :fetch-docs
   (fn [_ _]
@@ -37,6 +42,24 @@
                   :uri             "/docs"
                   :response-format (ajax/raw-response-format)
                   :on-success       [:set-docs]}}))
+
+(rf/reg-event-fx
+ :fetch-nba-metadata
+ (fn [_ _]
+   {:http-xhrio {:method          :get
+                 :uri             "http://data.nba.net/10s/prod/v1/today.json"
+                 :response-format (ajax/json-response-format)
+                 :on-success       [:fetch-scoreboard]}}))
+
+(rf/reg-event-fx
+ :fetch-scoreboard
+ (fn [_ [_ nba-metadata]]
+   {:http-xhrio {:method          :get
+                 :uri             (str 
+                                   "http://data.nba.net"
+                                   ((nba-metadata "links") "todayScoreboard"))
+                 :response-format (ajax/json-response-format)
+                 :on-success       [:set-scoreboard]}}))
 
 (rf/reg-event-db
   :common/set-error
@@ -46,7 +69,7 @@
 (rf/reg-event-fx
   :page/init-home
   (fn [_ _]
-    {:dispatch [:fetch-docs]}))
+    {:dispatch-n [[:fetch-docs] [:fetch-nba-metadata]]}))
 
 ;;subscriptions
 
@@ -71,6 +94,11 @@
   :docs
   (fn [db _]
     (:docs db)))
+
+(rf/reg-sub
+ :scoreboard
+ (fn [db _]
+   (:scoreboard db)))
 
 (rf/reg-sub
   :common/error
