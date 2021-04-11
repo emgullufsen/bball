@@ -39,7 +39,9 @@
                  [ring/ring-core "1.9.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.33"]
-                 [thheller/shadow-cljs "2.12.1" :scope "provided"]]
+                 [thheller/shadow-cljs "2.12.1" :scope "provided"]
+                 [org.clojure/data.json "2.0.2"]
+                 [overtone/at-at "1.2.0"]]
 
   :min-lein-version "2.0.0"
   

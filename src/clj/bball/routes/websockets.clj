@@ -1,15 +1,32 @@
 (ns bball.routes.websockets
   (:require
-   [org.httpkit.server 
+   [org.httpkit.server
     :refer [send! with-channel on-close on-receive]]
    [cognitect.transit :as t]
-   [clojure.tools.logging :as log]))
+   [clojure.tools.logging :as log]
+   [clojure.data.json :as json]
+   [clojure.core.async :refer [thread]]
+   [overtone.at-at :as atat]))
+
+(defn feed-connection-updates [channel]
+  (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+        my-pool (atat/mk-pool)]
+    (atat/every 
+     1000
+     #(let [latest-sb (json/read-str (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard"))))
+            sendresult (send! channel (json/write-str latest-sb))]
+        (println (json/write-str latest-sb))
+        (println (str "SEND RESULT WAS: " sendresult))
+        )
+     my-pool)))
 
 (defonce channels (atom #{}))
 
 (defn connect! [channel]
   (log/info "channel open")
-  (swap! channels conj channel))
+  (swap! channels conj channel)
+  (log/info "beginning updates feed")
+  (feed-connection-updates channel))
 
 (defn disconnect! [channel status]
   (log/info "channel closed:" status)

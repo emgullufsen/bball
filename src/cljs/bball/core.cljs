@@ -90,10 +90,13 @@
 (defn init! []
   (start-router!)
   (ajax/load-interceptors!)
-  (ws/make-websocket! 
-   (str 
+  (ws/make-websocket!
+   (str
     "ws://"
     (.-host js/location)
     "/ws")
-   (fn [_]))
+   #(do
+      (println "updating scoreboard received thru websocket...")
+      (rf/dispatch [:set-scoreboard %])
+     ))
   (mount-components))
