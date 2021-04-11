@@ -1,15 +1,16 @@
 (ns bball.handler
   (:require
-    [bball.middleware :as middleware]
-    [bball.layout :refer [error-page]]
-    [bball.routes.home :refer [home-routes]]
-    [bball.routes.services :refer [service-routes]]
-    [reitit.swagger-ui :as swagger-ui]
-    [reitit.ring :as ring]
-    [ring.middleware.content-type :refer [wrap-content-type]]
-    [ring.middleware.webjars :refer [wrap-webjars]]
-    [bball.env :refer [defaults]]
-    [mount.core :as mount]))
+   [bball.middleware :as middleware]
+   [bball.layout :refer [error-page]]
+   [bball.routes.home :refer [home-routes]]
+   [bball.routes.services :refer [service-routes]]
+   [reitit.swagger-ui :as swagger-ui]
+   [reitit.ring :as ring]
+   [ring.middleware.content-type :refer [wrap-content-type]]
+   [ring.middleware.webjars :refer [wrap-webjars]]
+   [bball.env :refer [defaults]]
+   [mount.core :as mount]
+   [bball.routes.websockets :refer [websocket-routes]]))
 
 (mount/defstate init-app
   :start ((or (:init defaults) (fn [])))
@@ -20,7 +21,8 @@
   (ring/ring-handler
     (ring/router
       [(home-routes)
-       (service-routes)])
+       (service-routes)
+       websocket-routes])
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path   "/swagger-ui"

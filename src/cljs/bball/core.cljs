@@ -1,17 +1,18 @@
 (ns bball.core
   (:require
-    [day8.re-frame.http-fx]
-    [reagent.dom :as rdom]
-    [reagent.core :as r]
-    [re-frame.core :as rf]
-    [goog.events :as events]
-    [goog.history.EventType :as HistoryEventType]
-    [markdown.core :refer [md->html]]
-    [bball.ajax :as ajax]
-    [bball.events]
-    [reitit.core :as reitit]
-    [reitit.frontend.easy :as rfe]
-    [clojure.string :as string])
+   [day8.re-frame.http-fx]
+   [reagent.dom :as rdom]
+   [reagent.core :as r]
+   [re-frame.core :as rf]
+   [goog.events :as events]
+   [goog.history.EventType :as HistoryEventType]
+   [markdown.core :refer [md->html]]
+   [bball.ajax :as ajax]
+   [bball.events]
+   [reitit.core :as reitit]
+   [reitit.frontend.easy :as rfe]
+   [clojure.string :as string]
+   [bball.websockets :as ws])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -38,14 +39,14 @@
 
 (defn game [data]
   [:div.columns
-   [:div.column.is-half [:p (str ((data "vTeam") "triCode") " - " ((data "vTeam") "score"))]]
-   [:div.column.is-half [:p (str ((data "hTeam") "triCode") " - " ((data "hTeam") "score"))]]])
+   [:div.column.is-half [:p (str (-> data :vTeam :triCode) " - " (-> data :vTeam :score))]]
+   [:div.column.is-half [:p (str (-> data :hTeam :triCode) " - " (-> data :hTeam :score))]]])
 
 (defn games-list []
   (when-let [gdat @(rf/subscribe [:scoreboard])]
     [:div.columns.is-centered
      [:div.column.is-two-thirds
-      (for [g (gdat "games")]
+      (for [g (map #(assoc % :key (:gameId %)) (:games gdat))]
         [game g])]]))
 
 (defn about-page []
@@ -89,4 +90,10 @@
 (defn init! []
   (start-router!)
   (ajax/load-interceptors!)
+  (ws/make-websocket! 
+   (str 
+    "ws://"
+    (.-host js/location)
+    "/ws")
+   (fn [_]))
   (mount-components))

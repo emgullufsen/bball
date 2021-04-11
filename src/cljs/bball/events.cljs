@@ -33,7 +33,7 @@
 (rf/reg-event-db
  :set-scoreboard
  (fn [db [_ sb]]
-   (assoc db :scoreboard sb)))
+   (assoc db :scoreboard (clojure.walk/keywordize-keys sb))))
 
 (rf/reg-event-fx
   :fetch-docs
