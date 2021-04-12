@@ -22,11 +22,13 @@
 (defonce channels (atom #{}))
 
 (future (loop []
-          (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
-                latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
-            (doseq [channel @channels]
-              (println "..............sending thru ws.........")
-              (send! channel latest-sb)))
+          (if (not-empty @channels)
+            (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                  latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
+              (doseq [channel @channels]
+                (println "..............sending thru ws.........")
+                (send! channel latest-sb)))
+            nil)
           (Thread/sleep 5000)
           (recur)))
 
