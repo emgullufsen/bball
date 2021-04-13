@@ -1,13 +1,17 @@
 (ns bball.core
   (:require
-    [bball.handler :as handler]
-    [bball.nrepl :as nrepl]
-    [luminus.http-server :as http]
-    [luminus-migrations.core :as migrations]
-    [bball.config :refer [env]]
-    [clojure.tools.cli :refer [parse-opts]]
-    [clojure.tools.logging :as log]
-    [mount.core :as mount])
+   [bball.handler :as handler]
+   [bball.nrepl :as nrepl]
+   [luminus.http-server :as http]
+   [luminus-migrations.core :as migrations]
+   [bball.config :refer [env]]
+   [clojure.tools.cli :refer [parse-opts]]
+   [clojure.tools.logging :as log]
+   [mount.core :as mount]
+   [bball.routes.websockets :as bws]
+   [clojure.data.json :as json]
+   [org.httpkit.server
+    :refer [send!]])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -71,5 +75,18 @@
       (migrations/migrate args (select-keys env [:database-url]))
       (System/exit 0))
     :else
-    (start-app args)))
+    (do
+      (start-app args)
+      (future (loop []
+                (if (not-empty @bws/channels)
+                  (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                        latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
+                    (doseq [channel @bws/channels]
+                      (println "..............sending thru ws.........")
+                      (send! channel latest-sb)))
+                  nil)
+                (println "loop loop loop")
+                (Thread/sleep 5000)
+                (recur)))
+)))
   
