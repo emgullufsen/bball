@@ -1,0 +1,37 @@
+name: bball-CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Dependencies
+        run: |
+          echo running lein deps...
+          lein deps
+
+      - name: Run Tests
+        run: |
+          echo running lein test...
+          lein test
+
+      - name: Build App
+        run: |
+          echo running lein uberjar...
+          lein uberjar
+
+      - name: Parting Message
+        run: |
+          echo Alrighty
+          echo Should be good to go...
