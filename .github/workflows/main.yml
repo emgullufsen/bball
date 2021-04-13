@@ -21,10 +21,10 @@ jobs:
           echo running lein deps...
           lein deps
 
-      - name: Run Tests
-        run: |
-          echo running lein test...
-          lein test
+      # - name: Run Tests
+      #   run: |
+      #     echo running lein test...
+      #     lein test :not-db
 
       - name: Build App
         run: |
