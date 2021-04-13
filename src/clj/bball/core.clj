@@ -44,6 +44,19 @@
   (when repl-server
     (nrepl/stop repl-server)))
 
+(mount/defstate updates-feeder
+  :start
+    (future (loop []
+            (if (not-empty @bws/channels)
+                (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                      latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
+                  (doseq [channel @bws/channels]
+                    (println "..............sending thru ws.........")
+                    (send! channel latest-sb)))
+                  nil)
+            (println "loop loop loop")
+            (Thread/sleep 5000)
+            (recur))))
 
 (defn stop-app []
   (doseq [component (:stopped (mount/stop))]
@@ -60,16 +73,5 @@
 
 (defn -main [& args]
   (mount/start #'bball.config/env)
-  (start-app args)
-  (future (loop []
-            (if (not-empty @bws/channels)
-                (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
-                      latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
-                  (doseq [channel @bws/channels]
-                    (println "..............sending thru ws.........")
-                    (send! channel latest-sb)))
-                  nil)
-            (println "loop loop loop")
-            (Thread/sleep 5000)
-            (recur))))
+  (start-app args))
   
