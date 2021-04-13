@@ -47,6 +47,12 @@
   
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
+  :test-selectors {:not-db [(fn [n & _]
+                              (println (format "Should I select this namespace?\n%s\n\n" (str n)))
+                              (not (.contains (str n) "bball.db.core-test")))
+                            (fn [m & _]
+                              (println (format "Should I select this var?\n%s\n\n" (str m)))
+                              true)]}
   :resource-paths ["resources" "target/cljsbuild"]
   :target-path "target/%s/"
   :main ^:skip-aot bball.core
