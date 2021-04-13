@@ -3,7 +3,6 @@
    [bball.handler :as handler]
    [bball.nrepl :as nrepl]
    [luminus.http-server :as http]
-   [luminus-migrations.core :as migrations]
    [bball.config :refer [env]]
    [clojure.tools.cli :refer [parse-opts]]
    [clojure.tools.logging :as log]
@@ -61,32 +60,16 @@
 
 (defn -main [& args]
   (mount/start #'bball.config/env)
-  (cond
-    (nil? (:database-url env))
-    (do
-      (log/error "Database configuration not found, :database-url environment variable must be set before running")
-      (System/exit 1))
-    (some #{"init"} args)
-    (do
-      (migrations/init (select-keys env [:database-url :init-script]))
-      (System/exit 0))
-    (migrations/migration? args)
-    (do
-      (migrations/migrate args (select-keys env [:database-url]))
-      (System/exit 0))
-    :else
-    (do
-      (start-app args)
-      (future (loop []
-                (if (not-empty @bws/channels)
-                  (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
-                        latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
-                    (doseq [channel @bws/channels]
-                      (println "..............sending thru ws.........")
-                      (send! channel latest-sb)))
+  (start-app args)
+  (future (loop []
+            (if (not-empty @bws/channels)
+                (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                      latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))]
+                  (doseq [channel @bws/channels]
+                    (println "..............sending thru ws.........")
+                    (send! channel latest-sb)))
                   nil)
-                (println "loop loop loop")
-                (Thread/sleep 5000)
-                (recur)))
-)))
+            (println "loop loop loop")
+            (Thread/sleep 5000)
+            (recur))))
   

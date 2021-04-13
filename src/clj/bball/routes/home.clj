@@ -1,7 +1,6 @@
 (ns bball.routes.home
   (:require
    [bball.layout :as layout]
-   [bball.db.core :as db]
    [clojure.java.io :as io]
    [bball.middleware :as middleware]
    [ring.util.response]
