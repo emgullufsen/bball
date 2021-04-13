@@ -57,7 +57,7 @@
    {:http-xhrio {:method          :get
                  :uri             (str 
                                    "http://data.nba.net"
-                                   ((nba-metadata "links") "todayScoreboard"))
+                                   ((nba-metadata "links") "currentScoreboard"))
                  :response-format (ajax/json-response-format)
                  :on-success       [:set-scoreboard]}}))
 
