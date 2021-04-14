@@ -41,7 +41,8 @@
                  [selmer "1.12.33"]
                  [thheller/shadow-cljs "2.12.1" :scope "provided"]
                  [org.clojure/data.json "2.0.2"]
-                 [overtone/at-at "1.2.0"]]
+                 [overtone/at-at "1.2.0"]
+                 [com.taoensso/sente "1.16.2"]]
 
   :min-lein-version "2.0.0"
   

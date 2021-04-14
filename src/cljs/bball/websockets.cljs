@@ -1,27 +1,69 @@
 (ns bball.websockets
-  (:require [cognitect.transit :as t]))
+  (:require-macros [mount.core :refer [defstate]])
+  (:require [cognitect.transit :as t]
+            [re-frame.core :as rf]
+            [taoensso.sente :as sente]
+            mount.core))
 
-(defonce ws-chan (atom nil))
+(defstate socket
+  :start (sente/make-channel-socket!
+          "/ws"
+          js/csrfToken
+          {:type :auto
+           :wrap-recv-evs? false}))
+
+(defn send! [& args]
+  (if-let [send-fn (:send-fn @socket)]
+    (apply send-fn args)
+    (throw (ex-info "Couldn't send message, channel isn't open!"
+                    {:message (first args)}))))
+
+(rf/reg-fx
+ :ws/send!
+ (fn [{:keys [message timeout callback-event]
+       :or {timeout 30000}}]
+   (if callback-event
+     (send! message timeout #(rf/dispatch (conj callback-event %)))
+     (send! message))))
+
 (def json-reader (t/reader :json))
 (def json-writer (t/writer :json))
 
-(defn receive-transit-msg!
-  [update-fn]
-  (fn [msg]
-    (update-fn
-     (->> msg .-data (t/read json-reader)))))
+(defmulti handle-message
+  (fn [{:keys [id]} _]
+    id))
 
-(defn send-transit-msg!
-  [msg]
-  (if @ws-chan
-    (.send @ws-chan (t/write json-writer msg))
-    (throw (js/Error. "Websocket is not available!"))))
+;; ---------------------------------------------------------------------------
+;; Default Handlers
 
-(defn make-websocket! [url receive-handler]
-  (println "attempting to connect websocket")
-  (if-let [chan (js/WebSocket. url)]
-    (do
-      (set! (.-onmessage chan) (receive-transit-msg! receive-handler))
-      (reset! ws-chan chan)
-      (println "Websocket connection established with: " url))
-    (throw (js/Error. "Websocket connection failed!"))))
+(defmethod handle-message :chsk/handshake
+  [{:keys [event]} _]
+  (.log js/console "Connection Established: " (pr-str event)))
+
+(defmethod handle-message :chsk/state
+  [{:keys [event]} _]
+  (.log js/console "State Changed: " (pr-str event)))
+
+(defmethod handle-message :default
+  [{:keys [event]} _]
+  (.warn js/console "Unknown websocket message: " (pr-str event)))
+
+;; SET SCOREBOARD HANDLER
+;; 
+
+(defmethod handle-message :sb/set-scoreboard
+  [{:keys [event]} _]
+  (rf/dispatch event))
+
+(defn receive-message!
+  [{:keys [id event] :as ws-message}]
+  (do
+    (.log js/console "Event Received: " (pr-str event))
+    (handle-message ws-message event)))
+
+(defstate channel-router
+  :start (sente/start-chsk-router!
+          (:ch-recv @socket)
+          #'receive-message!)
+  :stop (when-let [stop-fn @channel-router]
+          (stop-fn)))

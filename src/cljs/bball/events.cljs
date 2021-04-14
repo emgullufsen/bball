@@ -31,8 +31,9 @@
     (assoc db :docs docs)))
 
 (rf/reg-event-db
- :set-scoreboard
+ :sb/set-scoreboard
  (fn [db [_ sb]]
+   (.log js/console "resetting scoreboard")
    (assoc db :scoreboard (clojure.walk/keywordize-keys sb))))
 
 (rf/reg-event-fx
@@ -59,7 +60,7 @@
                                    "http://data.nba.net"
                                    ((nba-metadata "links") "currentScoreboard"))
                  :response-format (ajax/json-response-format)
-                 :on-success       [:set-scoreboard]}}))
+                 :on-success       [:sb/set-scoreboard]}}))
 
 (rf/reg-event-db
   :common/set-error

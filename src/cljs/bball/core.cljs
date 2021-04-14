@@ -12,7 +12,8 @@
    [reitit.core :as reitit]
    [reitit.frontend.easy :as rfe]
    [clojure.string :as string]
-   [bball.websockets :as ws])
+   [bball.websockets :as ws]
+   [mount.core :as mount])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -38,9 +39,10 @@
                  [nav-link "#/about" "About" :about]]]]))
 
 (defn game [data]
-  [:div.columns
-   [:div.column.is-half [:p (str (-> data :vTeam :triCode) " - " (-> data :vTeam :score))]]
-   [:div.column.is-half [:p (str (-> data :hTeam :triCode) " - " (-> data :hTeam :score))]]])
+   [:div.box 
+    (str (-> data :vTeam :triCode) " - " (-> data :vTeam :score))
+    [:br]
+    (str (-> data :hTeam :triCode) " - " (-> data :hTeam :score))])
 
 (defn games-list []
   (when-let [gdat @(rf/subscribe [:scoreboard])]
@@ -90,13 +92,5 @@
 (defn init! []
   (start-router!)
   (ajax/load-interceptors!)
-  (ws/make-websocket!
-   (str
-    "ws://"
-    (.-host js/location)
-    "/ws")
-   #(do
-      (println "updating scoreboard received thru websocket...")
-      (rf/dispatch [:set-scoreboard %])
-     ))
-  (mount-components))
+  (mount-components)
+  (mount/start))

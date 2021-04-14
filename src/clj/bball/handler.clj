@@ -10,7 +10,7 @@
    [ring.middleware.webjars :refer [wrap-webjars]]
    [bball.env :refer [defaults]]
    [mount.core :as mount]
-   [bball.routes.websockets :refer [websocket-routes]]))
+   [bball.routes.websockets :refer [websockboi-routes]]))
 
 (mount/defstate init-app
   :start ((or (:init defaults) (fn [])))
@@ -22,7 +22,7 @@
     (ring/router
       [(home-routes)
        (service-routes)
-       websocket-routes])
+       (websockboi-routes)])
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
         {:path   "/swagger-ui"

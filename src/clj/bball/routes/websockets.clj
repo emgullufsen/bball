@@ -1,29 +1,42 @@
 (ns bball.routes.websockets
   (:require
-   [org.httpkit.server
-    :refer [send! with-channel on-close on-receive]]
-   [clojure.tools.logging :as log]))
+   [bball.middleware :as middleware]
+   [clojure.tools.logging :as log]
+   [taoensso.sente :as sente]
+   [mount.core :refer [defstate]]
+   [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]))
 
-(defonce channels (atom #{}))
+(defstate sockboi
+   :start (sente/make-channel-socket!
+           (get-sch-adapter)
+           {:user-id-fn (fn [ring-req]
+                          (get-in ring-req [:params :client-id]))}))
 
-(defn connect! [channel]
-  (log/info "channel open")
-  (swap! channels conj channel)
-  (log/info "beginning updates feed"))
+(defn send! [uid message]
+  ((:send-fn sockboi) uid message))
 
-(defn disconnect! [channel status]
-  (log/info "channel closed:" status)
-  (swap! channels #(remove #{channel} %)))
+(defn receive-message! [{:keys [id ?reply-fn ring-req]
+                         :as   message}]
+  (case id
+    :chsk/bad-package   (log/debug "Bad Package:\n" message)
+    :chsk/bad-event     (log/debug "Bad Event: \n" message)
+    :chsk/uidport-open  (log/trace (:event message))
+    :chsk/uidport-close (log/trace (:event message))
+    :chsk/ws-ping       nil
+    ;; ELSE
+    nil))
 
-(defn notify-clients [msg]
-  (doseq [channel @channels]
-    (send! channel msg)))
+(defstate channel-router
+  :start (sente/start-chsk-router!
+          (:ch-recv sockboi)
+          #'receive-message!)
+  :stop (when-let [stop-fn channel-router]
+          (stop-fn)))
 
-(defn ws-handler [request]
-  (with-channel request channel
-    (connect! channel)
-    (on-close channel (partial disconnect! channel))
-    (on-receive channel #(notify-clients %))))
 
-(def websocket-routes
-  ["/ws" ws-handler])
+(defn websockboi-routes []
+  ["/ws"
+   {:middleware [middleware/wrap-csrf
+                 middleware/wrap-formats]
+    :get (:ajax-get-or-ws-handshake-fn sockboi)
+    :post (:ajax-post-fn sockboi)}])
