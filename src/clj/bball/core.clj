@@ -8,8 +8,7 @@
    [clojure.tools.logging :as log]
    [mount.core :as mount]
    [bball.routes.websockets :as bws]
-   [clojure.data.json :as json]
-   [clojure.walk :refer [keywordize-keys]])
+   [clojure.data.json :as json])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -44,19 +43,21 @@
     (nrepl/stop repl-server)))
 
 (mount/defstate updates-feeder
+                "feeds scores into open websocket connections"
   :start
-    (future (loop []
+  (future (loop []
             (if (not-empty @(:connected-uids bws/sockboi))
-                (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
-                      latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))
-                      lsbf (json/read-str latest-sb)]
-                  (doseq [uid (:any @(:connected-uids bws/sockboi))]
-                    (println "..............sending thru ws.........")
-                    (bws/send! uid [:sb/set-scoreboard lsbf])))
-                  nil)
-            (println "loop loop loop")
+              (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                    latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))
+                    lsbf (json/read-str latest-sb)]
+                (doseq [uid (:any @(:connected-uids bws/sockboi))]
+                  (bws/send! uid [:sb/set-scoreboard lsbf])))
+              nil)
             (Thread/sleep 5000)
-            (recur))))
+            (recur)))
+  :stop
+  (when updates-feeder
+    (future-cancel updates-feeder)))
 
 (defn stop-app []
   (doseq [component (:stopped (mount/stop))]
