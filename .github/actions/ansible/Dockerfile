@@ -1,9 +1,7 @@
 FROM ubuntu
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt update && \
-    apt install ansible gpg
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install ansible gpg
 
 COPY appery_key2.gpg /appery_key2.gpg
 COPY e_playbook.yml /e_playbook.yml
