@@ -15,6 +15,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      # this is not part of deploy
+      # - name: decrypt apper ssh key
+      #   run: ./.github/scripts/dk.sh
+      #   env: 
+      #     DKPASS: ${{ secrets.DKPASS }}
 
       - name: Get Dependencies
         run: |
@@ -35,3 +41,12 @@ jobs:
         run: |
           echo Alrighty
           echo Should be good to go...
+          
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/ansible
+        env:
+          DKPASS: ${{ secrets.DKPASS }}

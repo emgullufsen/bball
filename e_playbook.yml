@@ -1,0 +1,10 @@
+---
+- name: copy over a jar file
+  hosts: all
+  remote_user: apper
+  
+  tasks:
+  - name: move over the jar
+    copy: 
+      src: /bball/bball-app.jar
+      dest: $HOME/exec_spot/bball-app.jar
