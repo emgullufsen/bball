@@ -1,5 +1,6 @@
 FROM ubuntu
 
+RUN apt update
 RUN apt install ansible gpg
 
 COPY appery_key2.gpg /appery_key2.gpg
