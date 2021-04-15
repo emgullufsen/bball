@@ -48,7 +48,7 @@
  :fetch-nba-metadata
  (fn [_ _]
    {:http-xhrio {:method          :get
-                 :uri             "http://data.nba.net/10s/prod/v1/today.json"
+                 :uri             "https://data.nba.net/10s/prod/v1/today.json"
                  :response-format (ajax/json-response-format)
                  :on-success       [:fetch-scoreboard]}}))
 
@@ -57,7 +57,7 @@
  (fn [_ [_ nba-metadata]]
    {:http-xhrio {:method          :get
                  :uri             (str 
-                                   "http://data.nba.net"
+                                   "https://data.nba.net"
                                    ((nba-metadata "links") "currentScoreboard"))
                  :response-format (ajax/json-response-format)
                  :on-success       [:sb/set-scoreboard]}}))
