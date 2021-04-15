@@ -33,3 +33,43 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.navbar.is-info.games-list {
+  background-color: #dfbb85;
+}
+
+.navbar.is-info.games-list .navbar-brand > .navbar-item {
+  color: #B54213;  
+}
+
+.navbar.is-info.games-list .navbar-end .navbar-link.is-active, 
+.navbar.is-info.games-list .navbar-end .navbar-link:focus, 
+.navbar.is-info.games-list .navbar-end .navbar-link:hover, 
+.navbar.is-info.games-list .navbar-end > a.navbar-item.is-active, 
+.navbar.is-info.games-list .navbar-end > a.navbar-item:focus, 
+.navbar.is-info.games-list .navbar-end > a.navbar-item:hover, 
+.navbar.is-info.games-list .navbar-start .navbar-link.is-active, 
+.navbar.is-info.games-list .navbar-start .navbar-link:focus, 
+.navbar.is-info.games-list .navbar-start .navbar-link:hover, 
+.navbar.is-info.games-list .navbar-start > a.navbar-item.is-active, 
+.navbar.is-info.games-list .navbar-start > a.navbar-item:focus, 
+.navbar.is-info.games-list .navbar-start > a.navbar-item:hover {
+  background-color: #c9a877;
+  color: #B54213;
+}
+
+.navbar.is-info.games-list .navbar-brand .navbar-link.is-active, 
+.navbar.is-info.games-list .navbar-brand .navbar-link:focus, 
+.navbar.is-info.games-list .navbar-brand .navbar-link:hover, 
+.navbar.is-info.games-list .navbar-brand > a.navbar-item.is-active, 
+.navbar.is-info.games-list .navbar-brand > a.navbar-item:focus, 
+.navbar.is-info.games-list .navbar-brand > a.navbar-item:hover {
+  background-color: #c9a877;
+  color: #B54213;
+}
+
+.navbar.is-info .navbar-end .navbar-link, 
+.navbar.is-info .navbar-end > .navbar-item, 
+.navbar.is-info .navbar-start .navbar-link, 
+.navbar.is-info .navbar-start > .navbar-item {
+  color: #B54213;
+}

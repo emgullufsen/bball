@@ -24,9 +24,9 @@
 
 (defn navbar [] 
   (r/with-let [expanded? (r/atom false)]
-              [:nav.navbar.is-info>div.container
+              [:nav.navbar.is-info.games-list>div.container
                [:div.navbar-brand
-                [:a.navbar-item {:href "/" :style {:font-weight :bold}} "bball"]
+                [:a.navbar-item {:href "/" :style {:font-weight :bold}} "🏀bball"]
                 [:span.navbar-burger.burger
                  {:data-target :nav-menu
                   :on-click #(swap! expanded? not)
@@ -45,15 +45,35 @@
     (str (-> data :hTeam :triCode) " - " (-> data :hTeam :score))])
 
 (defn games-list []
-  (when-let [gdat @(rf/subscribe [:scoreboard])]
+  [:section.section>div.container>div.content
+    (when-let [gdat @(rf/subscribe [:scoreboard])]
     [:div.columns.is-centered
      [:div.column.is-two-thirds
       (for [g (map #(assoc % :key (:gameId %)) (:games gdat))]
-        [game g])]]))
+        [game g])]])])
 
 (defn about-page []
   [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]])
+   [:h1 "bball app runthrough"]
+   [:p "This app is written in Clojurescript & Clojure. The " 
+       [:a {:href "https://github.com/emgullufsen/bball"} "source"] 
+       " is on github."]
+   [:p "The frontend uses AJAX and a Websocket to receive live score updates from the official NBA scoreboard (JSON).
+        If you open the browser console you'll see the app logging information about websocket events."]
+   [:p "In the diagram below, first the client makes the initial request and gets a response for the page at nba-scores.rickysquid.org "
+       [:strong "(1 and 2)"]
+       ". Then for the initial scoreboard data the client makes an AJAX request to data.nba.net "
+       [:strong "(3)"]
+       ". The client then immediately establishes a Websocket connection
+       with the server at ws://nba-scores.rickysquid.org/ws "
+       [:strong "(4)"]
+       ". My server will then dutifully run a loop every five seconds - hitting the nba.data.net
+       endpoint for the latest scoreboard data and sending this through the websocket connection established "
+       [:strong "(5)"]
+       ". I like this model because the client isn't
+       having to do all the work AJAX-ing - it can sit back and passively receive data from my server."]
+   [:figure
+    [:img.image.is-636x594 {:src "/img/bball-diagram.png"}]]])
 
 (defn home-page []
   [:section.section>div.container>div.content
