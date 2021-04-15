@@ -7,7 +7,7 @@
 
 (defstate socket
   :start (sente/make-channel-socket!
-          "/nba-scores/ws"
+          "/ws"
           js/csrfToken
           {:type :auto
            :wrap-recv-evs? false}))
