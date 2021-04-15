@@ -8,3 +8,9 @@
     copy: 
       src: /bball/bball-app.jar
       dest: $HOME/exec_spot/bball-app.jar
+  
+  - name: restart the bball service
+    service:
+      name: bball
+      state: restarted
+    become: yes
