@@ -105,3 +105,132 @@ body {
 .navbar.is-info .navbar-start > .navbar-item {
   color: #B54213;
 }
+
+figure {
+  border-radius: 6px;
+}
+
+.content .team-figure.media-left {
+  margin-bottom: 0;
+}
+
+.ATL {
+	border: solid 2px var(--NBA-VAR-COLOR0-ATL);
+}
+
+.BOS {
+	border: solid 2px var(--NBA-VAR-COLOR0-BOS);
+}
+
+.BKN {
+	border: solid 2px var(--NBA-VAR-COLOR0-BKN);
+}
+
+.CHA {
+	border: solid 2px var(--NBA-VAR-COLOR0-CHA);
+}
+
+.CHI {
+	border: solid 2px var(--NBA-VAR-COLOR0-CHI);
+}
+
+.CLE {
+	border: solid 2px var(--NBA-VAR-COLOR0-CLE);
+}
+
+.DAL {
+	border: solid 2px var(--NBA-VAR-COLOR0-DAL);
+}
+
+.DEN {
+	border: solid 2px var(--NBA-VAR-COLOR0-DEN);
+}
+
+.DET {
+	border: solid 2px var(--NBA-VAR-COLOR0-DET);
+}
+
+.GSW {
+	border: solid 2px var(--NBA-VAR-COLOR0-GSW);
+}
+
+.HOU {
+	border: solid 2px var(--NBA-VAR-COLOR0-HOU);
+}
+
+.IND {
+	border: solid 2px var(--NBA-VAR-COLOR0-IND);
+}
+
+.LAC {
+	border: solid 2px var(--NBA-VAR-COLOR0-LAC);
+}
+
+.LAL {
+	border: solid 2px var(--NBA-VAR-COLOR0-LAL);
+}
+
+.MEM {
+	border: solid 2px var(--NBA-VAR-COLOR0-MEM);
+}
+
+.MIA {
+	border: solid 2px var(--NBA-VAR-COLOR0-MIA);
+}
+
+.MIL {
+	border: solid 2px var(--NBA-VAR-COLOR0-MIL);
+}
+
+.MIN {
+	border: solid 2px var(--NBA-VAR-COLOR0-MIN);
+}
+
+.NOP {
+	border: solid 2px var(--NBA-VAR-COLOR0-NOP);
+}
+
+.NYK {
+	border: solid 2px var(--NBA-VAR-COLOR0-NYK);
+}
+
+.OKC {
+	border: solid 2px var(--NBA-VAR-COLOR0-OKC);
+}
+
+.ORL {
+	border: solid 2px var(--NBA-VAR-COLOR0-ORL);
+}
+
+.PHI {
+	border: solid 2px var(--NBA-VAR-COLOR0-PHI);
+}
+
+.PHX {
+	border: solid 2px var(--NBA-VAR-COLOR0-PHX);
+}
+
+.POR {
+	border: solid 2px var(--NBA-VAR-COLOR0-POR);
+}
+
+.SAC {
+	border: solid 2px var(--NBA-VAR-COLOR0-SAC);
+}
+
+.SAS {
+	border: solid 2px var(--NBA-VAR-COLOR0-SAS);
+}
+
+.TOR {
+	border: solid 2px var(--NBA-VAR-COLOR0-TOR);
+}
+
+.UTA {
+	border: solid 2px var(--NBA-VAR-COLOR0-UTA);
+}
+
+.WAS {
+	border: solid 2px var(--NBA-VAR-COLOR0-WAS);
+}
+

@@ -41,14 +41,16 @@
 (defn game [{{vts :score vtc :triCode} :vTeam {hts :score htc :triCode} :hTeam :as data}]
    [:div.box 
     [:article.media
-      [:figure.media-left
+      [:figure.media-left.team-figure
+        {:class vtc}
         [:p.image.is-32x32
           [:img {:src (str "/img/" vtc ".png")}]]]
       [:div.media-content
         [:div.content
           [:p (str vtc " - " vts)]]]]
     [:article.media
-      [:figure.media-left
+      [:figure.media-left.team-figure
+        {:class htc}
         [:p.image.is-32x32
           [:img {:src (str "/img/" htc ".png")}]]]
       [:div.media-content
