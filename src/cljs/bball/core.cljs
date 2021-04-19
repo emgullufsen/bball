@@ -38,11 +38,23 @@
                  [nav-link "#/" "Home" :home]
                  [nav-link "#/about" "About" :about]]]]))
 
-(defn game [data]
+(defn game [{{vts :score vtc :triCode} :vTeam {hts :score htc :triCode} :hTeam :as data}]
    [:div.box 
-    (str (-> data :vTeam :triCode) " - " (-> data :vTeam :score))
-    [:br]
-    (str (-> data :hTeam :triCode) " - " (-> data :hTeam :score))])
+    [:article.media
+      [:figure.media-left
+        [:p.image.is-32x32
+          [:img {:src (str "/img/" vtc ".png")}]]]
+      [:div.media-content
+        [:div.content
+          [:p (str vtc " - " vts)]]]]
+    [:article.media
+      [:figure.media-left
+        [:p.image.is-32x32
+          [:img {:src (str "/img/" htc ".png")}]]]
+      [:div.media-content
+        [:div.content
+          [:p (str htc " - " hts)]]]]
+   ])
 
 (defn games-list []
   [:section.section>div.container>div.content
