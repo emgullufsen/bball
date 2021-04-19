@@ -29,6 +29,11 @@
 	--NBA-VAR-COLOR0-TOR: #ce1141;
 	--NBA-VAR-COLOR0-UTA: #f9a01b;
 	--NBA-VAR-COLOR0-WAS: #e31837;
+  --COLOR-TAN: #dfbb85;
+  --COLOR-YELLOW: #f9c852;
+  --COLOR-BASKETBALL: #B54213;
+  --COLOR-DARKERTAN: #c9a877;
+
 }
 html,
 body {
@@ -66,11 +71,11 @@ body {
 }
 
 .navbar.is-info.games-list {
-  background-color: #dfbb85;
+  background-color: var(--COLOR-TAN);
 }
 
 .navbar.is-info.games-list .navbar-brand > .navbar-item {
-  color: #B54213;  
+  color: var(--COLOR-BASKETBALL);  
 }
 
 .navbar.is-info.games-list .navbar-end .navbar-link.is-active, 
@@ -85,8 +90,8 @@ body {
 .navbar.is-info.games-list .navbar-start > a.navbar-item.is-active, 
 .navbar.is-info.games-list .navbar-start > a.navbar-item:focus, 
 .navbar.is-info.games-list .navbar-start > a.navbar-item:hover {
-  background-color: #c9a877;
-  color: #B54213;
+  background-color: var(--COLOR-DARKERTAN);
+  color: var(--COLOR-BASKETBALL);
 }
 
 .navbar.is-info.games-list .navbar-brand .navbar-link.is-active, 
@@ -95,15 +100,15 @@ body {
 .navbar.is-info.games-list .navbar-brand > a.navbar-item.is-active, 
 .navbar.is-info.games-list .navbar-brand > a.navbar-item:focus, 
 .navbar.is-info.games-list .navbar-brand > a.navbar-item:hover {
-  background-color: #c9a877;
-  color: #B54213;
+  background-color: var(--COLOR-DARKERTAN);
+  color: var(--COLOR-BASKETBALL);
 }
 
 .navbar.is-info .navbar-end .navbar-link, 
 .navbar.is-info .navbar-end > .navbar-item, 
 .navbar.is-info .navbar-start .navbar-link, 
 .navbar.is-info .navbar-start > .navbar-item {
-  color: #B54213;
+  color: var(--COLOR-BASKETBALL);
 }
 
 figure {
@@ -112,6 +117,10 @@ figure {
 
 .content .team-figure.media-left {
   margin-bottom: 0;
+}
+
+.glist {
+  background-color: var(--COLOR-YELLOW);
 }
 
 .ATL {

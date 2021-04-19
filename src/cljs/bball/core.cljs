@@ -59,7 +59,7 @@
    ])
 
 (defn games-list []
-  [:section.section>div.container>div.content
+  [:section.section.glist>div.container>div.content
     (when-let [gdat @(rf/subscribe [:scoreboard])]
     [:div.columns.is-centered
      [:div.column.is-two-thirds
