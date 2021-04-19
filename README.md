@@ -2,6 +2,10 @@
 
 [![bball-CI](https://github.com/emgullufsen/bball/actions/workflows/main.yml/badge.svg)](https://github.com/emgullufsen/bball/actions/workflows/main.yml)
 
+[![nba scores app live deployment](/resources/public/img/ns2.png)](
+    https://nba-scores.rickysquid.org
+)
+
 A simple NBA Live Scoreboard webapp. It uses an initial AJAX request to data.nba.net, then opens a websocket connection to the clojure backend, which feeds
 score updates to the client every five seconds.
 
