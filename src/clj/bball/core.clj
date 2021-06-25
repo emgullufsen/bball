@@ -46,13 +46,18 @@
                 "feeds scores into open websocket connections"
   :start
   (future (loop []
+            (println "still looping")
             (if (not-empty @(:connected-uids bws/sockboi))
-              (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
-                    latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))
-                    lsbf (json/read-str latest-sb)]
-                (doseq [uid (:any @(:connected-uids bws/sockboi))]
-                  (bws/send! uid [:sb/set-scoreboard lsbf])))
-              nil)
+              (do
+		(println (str "connected ids not empty" @(:connected-uids
+bws/sockboi)))
+                (let [today-json (json/read-str (slurp "http://data.nba.net/10s/prod/v1/today.json"))
+                      latest-sb  (slurp (str "http://data.nba.net" ((today-json "links") "currentScoreboard")))
+                      lsbf (json/read-str latest-sb)]
+                  (doseq [uid (:any @(:connected-uids bws/sockboi))]
+                    (println (str "attempting send of " lsbf))
+		    (bws/send! uid [:sb/set-scoreboard lsbf])))
+              nil))
             (Thread/sleep 5000)
             (recur)))
   :stop
